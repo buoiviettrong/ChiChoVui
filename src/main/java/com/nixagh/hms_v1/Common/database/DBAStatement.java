@@ -13,38 +13,42 @@ public class DBAStatement {
   public PreparedStatement getStatement(String sql) throws SQLException {
     return connection.prepareStatement(sql);
   }
-  public PreparedStatement getStatement(String sql, ArrayList<RecordStatement> params) throws SQLException {
+  public PreparedStatement getStatement(String sql, int statement) throws SQLException {
+    return connection.prepareStatement(sql, statement);
+  }
+  public PreparedStatement getStatement(String sql, Object ...params) throws SQLException {
     return setStatement(connection.prepareStatement(sql), params);
   }
-  public PreparedStatement getStatement(String sql, ArrayList<RecordStatement> params, int statement) throws SQLException {
+  public PreparedStatement getStatement(String sql,  int statement, Object ...params) throws SQLException {
     return setStatement(connection.prepareStatement(sql, statement), params);
   }
-  private PreparedStatement setStatement(PreparedStatement ps, ArrayList<RecordStatement> params) throws SQLException {
-    for (RecordStatement item : params) {
-      String value = item.value().toString();
-      switch (item.type()) {
-        case "INT":
-          ps.setInt(item.index(), Integer.parseInt(value));
+  private PreparedStatement setStatement(PreparedStatement ps, Object ...params) throws SQLException {
+    int i = 1;
+    for(Object item : params) {
+      System.out.println(item.getClass());
+      switch (item.getClass().toString()) {
+        case "class java.lang.Integer":
+          ps.setInt(i++, (Integer) item);
           break;
-        case "LONG":
-          ps.setLong(item.index(), Long.parseLong(value));
+        case "class java.lang.Long":
+          ps.setLong(i++, (Long) item);
           break;
-        case "FLOAT":
-          ps.setFloat(item.index(), Float.parseFloat(value));
+        case "class java.lang.Float":
+          ps.setFloat(i++, (Float) item);
           break;
-        case "DOUBLE":
-          ps.setDouble(item.index(), Double.parseDouble(value));
+        case "class java.lang.Double":
+          ps.setDouble(i++, (Double) item);
           break;
-        case "BOOLEAN":
-          ps.setBoolean(item.index(), Boolean.parseBoolean(value));
+        case "class java.lang.Boolean":
+          ps.setBoolean(i++, (Boolean) item);
           break;
-        case "STRING":
-          ps.setString(item.index(), value);
+        case "class java.lang.String":
+          ps.setString(i++, (String) item);
           break;
-        case "DATE":
-          ps.setDate(item.index(), Date.valueOf(value));
+        case "class java.lang.Date":
+          ps.setDate(i++, (Date) item);
         default:
-          throw new IllegalStateException("Unexpected value: " + item.type());
+          throw new IllegalStateException("Unexpected value: " + item.getClass());
       }
     }
     return ps;

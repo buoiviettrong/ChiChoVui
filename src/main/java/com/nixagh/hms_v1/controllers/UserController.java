@@ -28,9 +28,4 @@ public class UserController {
   public int createUser(@RequestBody UserModal user) throws SQLException {
     return userService.create(user);
   }
-
-  @GetMapping("/fullname")
-  public List<UserWithFullName> getAllUserWithFullNames() throws SQLException {
-    return userService.findAllWithFullNames();
-  }
 }
